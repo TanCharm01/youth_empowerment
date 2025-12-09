@@ -34,10 +34,25 @@ export default async function RootLayout({
 
   const isLoggedIn = !!user || !!customSession;
 
+  let isAdmin = false;
+  const userId = user?.id || customSession?.value;
+
+  if (userId) {
+    const { data: dbUser } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', userId)
+      .single();
+
+    if (dbUser?.role === 'ADMIN') {
+      isAdmin = true;
+    }
+  }
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${outfit.variable} font-sans antialiased flex flex-col min-h-screen bg-orange-50/30 text-foreground`}>
-        <Navbar isLoggedIn={isLoggedIn} />
+        <Navbar isLoggedIn={isLoggedIn} isAdmin={isAdmin} />
         <main className="flex-grow pt-20">
           {children}
         </main>

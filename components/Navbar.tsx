@@ -6,7 +6,7 @@ import { Menu, X, Heart } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { logout } from '@/app/(auth)/signup/actions';
 
-export default function Navbar({ isLoggedIn }: { isLoggedIn: boolean }) {
+export default function Navbar({ isLoggedIn, isAdmin }: { isLoggedIn: boolean; isAdmin?: boolean }) {
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
 
@@ -37,8 +37,8 @@ export default function Navbar({ isLoggedIn }: { isLoggedIn: boolean }) {
                 <div className="hidden md:flex items-center gap-4">
                     {isLoggedIn ? (
                         <>
-                            <Link href="/programs" className="font-medium text-gray-600 hover:text-primary transition-colors">
-                                My Dashboard
+                            <Link href={isAdmin ? "/admin" : "/programs"} className="font-medium text-gray-600 hover:text-primary transition-colors">
+                                {isAdmin ? "Admin Dashboard" : "My Dashboard"}
                             </Link>
                             <form action={logout}>
                                 <button type="submit" className="px-5 py-2.5 bg-gray-100 text-gray-700 text-sm font-semibold rounded-full hover:bg-gray-200 transition-transform active:scale-95 border border-gray-200">

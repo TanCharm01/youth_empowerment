@@ -44,14 +44,14 @@ export async function login(prevState: any, formData: FormData) {
                 });
 
                 revalidatePath('/', 'layout');
-                redirect('/programs'); // Redirect to content
+                redirect('/'); // Redirect to landing page
             }
         }
         return { message: error.message };
     }
 
     revalidatePath('/', 'layout');
-    redirect('/programs');
+    redirect('/');
 }
 
 export async function signup(prevState: any, formData: FormData) {
