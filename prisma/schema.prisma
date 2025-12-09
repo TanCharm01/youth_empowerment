@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model users {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String
+  email     String   @unique
+  password  String
+  role      user_role @default(USER)
+  level     user_level
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at DateTime? @default(now()) @db.Timestamptz(6)
+  
+  user_progress user_progress[]
+  watch_history watch_history[]
+  admin_logs    admin_logs[]
+}
+
+enum user_role {
+  USER
+  ADMIN
+}
+
+enum user_level {
+  HIGH_SCHOOL
+  UNIVERSITY
+  EARLY_CAREER
+}
+
+model programs {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title       String
+  description String?
+  cover_image String?
+  created_at  DateTime? @default(now()) @db.Timestamptz(6)
+
+  videos        videos[]
+  resources     resources[]
+  user_progress user_progress[]
+}
+
+model videos {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  program_id  String   @db.Uuid
+  title       String
+  description String?
+  youtube_url String
+  audience    String?
+  order_index Int?     @default(0)
+  created_at  DateTime? @default(now()) @db.Timestamptz(6)
+
+  program       programs       @relation(fields: [program_id], references: [id], onDelete: Cascade)
+  watch_history watch_history[]
+}
+
+model resources {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  program_id  String   @db.Uuid
+  title       String
+  description String?
+  file_url    String
+  created_at  DateTime? @default(now()) @db.Timestamptz(6)
+
+  program     programs @relation(fields: [program_id], references: [id], onDelete: Cascade)
+}
+
+model user_progress {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id         String   @db.Uuid
+  program_id      String   @db.Uuid
+  total_videos    Int?     @default(0)
+  watched_videos  Int?     @default(0)
+  percent_complete Decimal? @default(0) @db.Decimal(5, 2)
+  updated_at      DateTime? @default(now()) @db.Timestamptz(6)
+
+  user    users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  program programs @relation(fields: [program_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, program_id])
+}
+
+model watch_history {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id        String   @db.Uuid
+  video_id       String   @db.Uuid
+  last_timestamp Int?     @default(0)
+  times_watched  Int?     @default(0)
+  is_completed   Boolean? @default(false)
+  updated_at     DateTime? @default(now()) @db.Timestamptz(6)
+
+  user  users  @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  video videos @relation(fields: [video_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, video_id])
+}
+
+model admin_logs {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  admin_id  String   @db.Uuid
+  action    String
+  entity    String
+  entity_id String?  @db.Uuid
+  logged_at DateTime? @default(now()) @db.Timestamptz(6)
+
+  admin     users    @relation(fields: [admin_id], references: [id])
+}
