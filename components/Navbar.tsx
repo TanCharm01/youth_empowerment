@@ -37,7 +37,7 @@ export default function Navbar({ isLoggedIn, isAdmin }: { isLoggedIn: boolean; i
                 <div className="hidden md:flex items-center gap-4">
                     {isLoggedIn ? (
                         <>
-                            <Link href={isAdmin ? "/admin" : "/programs"} className="font-medium text-gray-600 hover:text-primary transition-colors">
+                            <Link href={isAdmin ? "/admin" : "/dashboard"} className="font-medium text-gray-600 hover:text-primary transition-colors">
                                 {isAdmin ? "Admin Dashboard" : "My Dashboard"}
                             </Link>
                             <form action={logout}>

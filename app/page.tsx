@@ -1,7 +1,16 @@
 import Link from 'next/link';
 import { ArrowRight, BookOpen, GraduationCap, Star, User } from 'lucide-react';
+import prisma from '@/lib/prisma';
 
-export default function Home() {
+export default async function Home() {
+  const programs = await prisma.programs.findMany();
+
+  // Helper to find ID by title
+  const getLink = (title: string) => {
+    const p = programs.find(program => program.title === title);
+    return p ? `/programs/${p.id}` : '/programs';
+  };
+
   return (
     <div className="flex flex-col gap-16 md:gap-24 pb-20">
       {/* Hero Section */}
@@ -67,25 +76,25 @@ export default function Home() {
             title="High School"
             icon={<BookOpen className="w-8 h-8 text-pink-500" />}
             description="Ace your exams and navigate teen life with confidence."
-            href="/programs/high-school"
+            href={getLink("High School")}
           />
           <ProgramCard
             title="University"
             icon={<GraduationCap className="w-8 h-8 text-purple-500" />}
             description="Thrive in your degree, campus life, and beyond."
-            href="/programs/university"
+            href={getLink("University")}
           />
           <ProgramCard
             title="Gap Year"
             icon={<User className="w-8 h-8 text-orange-500" />}
             description="Make the most of your time off to discover yourself."
-            href="/programs/gap-year"
+            href={getLink("Gap Year")}
           />
           <ProgramCard
             title="Personal Dev"
             icon={<Star className="w-8 h-8 text-yellow-500" />}
             description="Grow in faith, character, leadership and life skills."
-            href="/programs/personal-development"
+            href={getLink("Personal Dev")}
           />
         </div>
       </section>

@@ -8,8 +8,8 @@ export default async function middleware(request: NextRequest) {
         const { supabaseResponse, user } = await updateSession(request);
 
         // 2. Define protected routes
-        // We only want to protect /programs and its sub-routes
-        const isProtectedRoute = request.nextUrl.pathname.startsWith('/programs');
+        // We only want to protect /programs and its sub-routes, and /dashboard
+        const isProtectedRoute = request.nextUrl.pathname.startsWith('/programs') || request.nextUrl.pathname.startsWith('/dashboard');
 
         if (isProtectedRoute) {
             // 3. Check for Custom Session (Fallback)
