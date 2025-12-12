@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowRight, BookOpen, GraduationCap, Star, User } from 'lucide-react';
+import { ArrowRight, BookOpen, GraduationCap, Star, User, Mic, Play } from 'lucide-react';
 import prisma from '@/lib/prisma';
 
 export default async function Home() {
@@ -13,6 +13,7 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col gap-16 md:gap-24 pb-20">
+      {/* Hero Section */}
       {/* Hero Section */}
       <section className="relative h-[85vh] flex items-center justify-center bg-gradient-to-b from-pink-50/50 to-white overflow-hidden">
         {/* Abstract background blobs */}
@@ -42,15 +43,9 @@ export default async function Home() {
       </section>
 
       {/* About Section */}
-      <section className="container px-4 mx-auto grid md:grid-cols-2 gap-12 items-center">
-        <div className="order-2 md:order-1 relative h-[500px] rounded-[2.5rem] overflow-hidden shadow-2xl rotate-1 hover:rotate-0 transition-transform duration-500 ring-8 ring-white">
-          {/* Placeholder for Tanatswa's image */}
-          <div className="absolute inset-0 bg-gray-100/50 flex items-center justify-center text-gray-400 bg-[url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2671&auto=format&fit=crop')] bg-cover bg-center">
-
-          </div>
-        </div>
-        <div className="order-1 md:order-2 flex flex-col gap-6">
-          <h2 className="text-4xl font-bold text-gray-900">About Me</h2>
+      <section className="container px-4 mx-auto grid md:grid-cols-2 gap-12 items-center py-12">
+        <div className="flex flex-col gap-6">
+          <h2 className="text-4xl font-bold text-gray-900 border-l-4 border-pink-500 pl-4">About Me</h2>
           <div className="space-y-4 text-lg text-gray-600 leading-relaxed">
             <p>
               Hi! I'm Tanatswa. I created this hub to be the big sister I wish I had.
@@ -62,40 +57,69 @@ export default async function Home() {
             </p>
           </div>
         </div>
+
+        <div className="relative h-[500px] rounded-[2.5rem] overflow-hidden shadow-2xl rotate-1 hover:rotate-0 transition-transform duration-500 ring-8 ring-white bg-gray-100">
+          {/* Placeholder for Tanatswa's image */}
+          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2671&auto=format&fit=crop')] bg-cover bg-center" />
+        </div>
       </section>
 
       {/* Programs Section */}
-      <section className="container px-4 mx-auto py-12">
-        <div className="text-center mb-16 flex flex-col items-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Choose Your Path</h2>
-          <p className="text-gray-500 max-w-lg">Curated resources specifically designed for the season you are in right now.</p>
-        </div>
+      {/* Mentorship Section */}
+      <section className="container px-4 mx-auto py-12 pb-24">
+        <div className="grid md:grid-cols-12 gap-12">
+          {/* Left Column: Mission + CTA */}
+          <div className="md:col-span-5 flex flex-col justify-center gap-8">
+            <div>
+              <span className="text-pink-600 font-semibold tracking-wider uppercase text-sm mb-2 block">Mentorship</span>
+              <h2 className="text-5xl md:text-6xl font-bold text-gray-900 leading-tight">
+                Your Success,<br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500">My Mission.</span>
+              </h2>
+            </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <ProgramCard
-            title="High School"
-            icon={<BookOpen className="w-8 h-8 text-pink-500" />}
-            description="Ace your exams and navigate teen life with confidence."
-            href={getLink("High School")}
-          />
-          <ProgramCard
-            title="University"
-            icon={<GraduationCap className="w-8 h-8 text-purple-500" />}
-            description="Thrive in your degree, campus life, and beyond."
-            href={getLink("University")}
-          />
-          <ProgramCard
-            title="Gap Year"
-            icon={<User className="w-8 h-8 text-orange-500" />}
-            description="Make the most of your time off to discover yourself."
-            href={getLink("Gap Year")}
-          />
-          <ProgramCard
-            title="Personal Dev"
-            icon={<Star className="w-8 h-8 text-yellow-500" />}
-            description="Grow in faith, character, leadership and life skills."
-            href={getLink("Personal Dev")}
-          />
+            <div className="h-1 w-20 bg-pink-500 rounded-full" />
+
+            <p className="text-gray-600 text-lg">
+              Choose the path that fits your current season. From high school prep to personal growth, we have a roadmap for you.
+            </p>
+
+            <div>
+              <Link href="/programs" className="px-8 py-4 bg-gray-900 text-white rounded-full font-bold hover:bg-gray-800 transition-colors inline-flex items-center gap-2">
+                Get Started <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Right Column: 2x2 Grid */}
+          <div className="md:col-span-7">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <ProgramCard
+                title="High School"
+                icon={<BookOpen className="w-6 h-6 text-pink-500" />}
+                description="Ace your exams & naviagte teen life."
+                href={getLink("High School")}
+              />
+              <ProgramCard
+                title="University"
+                icon={<GraduationCap className="w-6 h-6 text-purple-500" />}
+                description="Thrive in your degree & campus life."
+                href={getLink("University")}
+              />
+              <ProgramCard
+                title="Gap Year"
+                icon={<User className="w-6 h-6 text-orange-500" />}
+                description="Discover yourself before your next step."
+                href={getLink("Gap Year")}
+              />
+              <ProgramCard
+                title="Personal Dev"
+                icon={<Star className="w-6 h-6 text-yellow-500" />}
+                description="Grow in faith, character & leadership."
+                href={getLink("Personal Dev")}
+              />
+            </div>
+          </div>
         </div>
       </section>
     </div>

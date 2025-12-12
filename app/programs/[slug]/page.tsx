@@ -3,16 +3,20 @@ import { notFound } from "next/navigation";
 import { FileText, PlayCircle, ArrowLeft, Download } from "lucide-react";
 import prisma from "@/lib/prisma";
 
+// Helper to get YouTube ID
+function getYoutubeId(url: string) {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+}
+
 export default async function ProgramPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
 
-    // Fetch program with relations
     const program = await prisma.programs.findUnique({
         where: { id: slug },
         include: {
-            videos: {
-                orderBy: { order_index: 'asc' }
-            },
+            videos: { orderBy: { order_index: 'asc' } },
             resources: true
         }
     });
@@ -20,115 +24,146 @@ export default async function ProgramPage({ params }: { params: Promise<{ slug: 
     if (!program) return notFound();
 
     return (
-        <div className="min-h-screen bg-gray-50/50">
-            {/* Header */}
-            <div className="bg-white border-b border-pink-100">
-                <div className="container mx-auto px-4 py-8 md:py-12">
-                    <Link href="/programs" className="inline-flex items-center text-sm text-gray-500 hover:text-primary mb-6 transition-colors">
-                        <ArrowLeft className="w-4 h-4 mr-1" /> Back to Programs
+        <div className="min-h-screen bg-white">
+            {/* 1. Header Section with Half-Circle */}
+            <div className="relative bg-primary text-white pt-20 pb-32 rounded-b-[50%] md:rounded-b-[40%] shadow-xl overflow-hidden">
+                <div className="absolute top-4 left-4 z-10">
+                    <Link href="/programs" className="inline-flex items-center text-white/80 hover:text-white transition-colors">
+                        <ArrowLeft className="w-5 h-5 mr-1" /> Back
                     </Link>
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div>
-                            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">{program.title}</h1>
-                            <p className="text-gray-500 max-w-2xl">
-                                {program.description || "Your curated learning path. Watch the lessons in order or download resources to study at your own pace."}
+                </div>
+                <div className="container mx-auto px-4 text-center relative z-10">
+                    <span className="inline-block px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-semibold mb-4 uppercase tracking-wider">
+                        Program
+                    </span>
+                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 tracking-tight">
+                        {program.title}
+                    </h1>
+                    <p className="text-lg text-pink-100 max-w-2xl mx-auto opacity-90">
+                        {program.description}
+                    </p>
+                </div>
+                {/* Decorative background pattern could go here */}
+            </div>
+
+            {/* 2. My Thoughts Section */}
+            <section className="container mx-auto px-4 py-16 -mt-10 relative z-20">
+                <div className="bg-white rounded-3xl p-8 md:p-12 shadow-2xl max-w-5xl mx-auto border border-pink-50 flex flex-col md:flex-row gap-10 items-center">
+                    <div className="flex-1 space-y-4">
+                        <h2 className="text-2xl font-bold text-gray-900 border-b-4 border-pink-200 inline-block pb-1">
+                            My Thoughts on {program.title}
+                        </h2>
+                        <div className="prose text-gray-600 leading-relaxed">
+                            <p>
+                                I believe this stage is crucial for everyone. It bridges the gap between fundamental knowledge and real-world application.
+                                In this program, we dive deep into the core concepts that I wish I knew when I was starting out.
+                                It is designed not just to teach, but to inspire and empower you to take the next step in your journey with confidence.
+                            </p>
+                            <p>
+                                Take your time with each episode, and don't forget to check the resources!
                             </p>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <span className="px-3 py-1 bg-pink-100 text-pink-700 text-xs font-semibold rounded-full uppercase tracking-wider">
-                                {(program.videos?.length || 0) + (program.resources?.length || 0)} Items
-                            </span>
+                    </div>
+                    <div className="w-full md:w-1/3 shrink-0">
+                        {/* Placeholder Image as requested - using program cover if available or a placeholder */}
+                        <div className="aspect-square rounded-2xl overflow-hidden bg-gray-100 shadow-lg rotate-3 transform hover:rotate-0 transition-transform duration-300">
+                            {/* Using a placeholder service or the program image if it exists, implementing the requested hardcoded style */}
+                            <img
+                                src={program.cover_image || "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"}
+                                alt="Author Thoughts"
+                                className="w-full h-full object-cover"
+                            />
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            {/* Content List */}
-            <div className="container mx-auto px-4 py-12">
-                <div className="grid gap-6 max-w-4xl mx-auto">
-                    {/* Videos Section */}
-                    {program.videos && program.videos.length > 0 && (
-                        <>
-                            <h2 className="text-xl font-bold text-gray-800 mt-4 mb-2">Video Lessons</h2>
-                            {program.videos.map((video) => (
-                                <div key={video.id} className="group bg-white rounded-2xl p-6 border border-pink-50 hover:border-pink-200 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row gap-6 md:items-center">
-                                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 bg-rose-50 text-rose-500">
-                                        <PlayCircle className="w-8 h-8" />
-                                    </div>
-                                    <div className="flex-grow">
-                                        <div className="flex items-center gap-3 mb-1">
-                                            <span className="text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded bg-rose-100 text-rose-700">
-                                                VIDEO
-                                            </span>
-                                            {/* Duration is not in DB Schema currently */}
-                                            {/* <span className="text-xs text-gray-400">{video.duration}</span> */}
+            {/* 3. Episodes Section (Horizontal Scroll) */}
+            <section className="py-16 bg-gray-50/50">
+                <div className="container mx-auto px-4">
+                    <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+                        {program.title} Episodes
+                    </h2>
+
+                    {program.videos && program.videos.length > 0 ? (
+                        <div className="flex overflow-x-auto gap-6 pb-8 snap-x p-4 scrollbar-hide">
+                            {program.videos.map((video) => {
+                                const videoId = getYoutubeId(video.youtube_url);
+                                return (
+                                    <div key={video.id} className="min-w-[300px] md:min-w-[400px] snap-center bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden flex flex-col">
+                                        <div className="aspect-video bg-black relative group">
+                                            {videoId ? (
+                                                <iframe
+                                                    src={`https://www.youtube.com/embed/${videoId}`}
+                                                    title={video.title}
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                    allowFullScreen
+                                                    className="w-full h-full"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center text-white">
+                                                    <PlayCircle className="w-12 h-12 opacity-50" />
+                                                </div>
+                                            )}
                                         </div>
-                                        <h3 className="text-xl font-bold text-gray-900 group-hover:text-primary transition-colors mb-2">
-                                            {video.title}
-                                        </h3>
-                                        <p className="text-gray-500 text-sm leading-relaxed">
-                                            {video.description}
-                                        </p>
-                                    </div>
-                                    <div className="flex items-center gap-3 shrink-0 mt-2 md:mt-0 pt-4 md:pt-0 border-t md:border-t-0 border-gray-100">
-                                        <a
-                                            href={video.youtube_url}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="px-5 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-primary transition-colors flex items-center gap-2 shadow-lg shadow-gray-200"
-                                        >
-                                            <PlayCircle className="w-4 h-4" /> Watch
-                                        </a>
-                                    </div>
-                                </div>
-                            ))}
-                        </>
-                    )}
-
-                    {/* Resources Section */}
-                    {program.resources && program.resources.length > 0 && (
-                        <>
-                            <h2 className="text-xl font-bold text-gray-800 mt-8 mb-2">Downloadable Resources</h2>
-                            {program.resources.map((file) => (
-                                <div key={file.id} className="group bg-white rounded-2xl p-6 border border-pink-50 hover:border-pink-200 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row gap-6 md:items-center">
-                                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 bg-blue-50 text-blue-500">
-                                        <FileText className="w-8 h-8" />
-                                    </div>
-                                    <div className="flex-grow">
-                                        <div className="flex items-center gap-3 mb-1">
-                                            <span className="text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded bg-blue-100 text-blue-700">
-                                                PDF
-                                            </span>
+                                        <div className="p-5 flex-1 flex flex-col">
+                                            <h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-2">{video.title}</h3>
+                                            <p className="text-sm text-gray-500 line-clamp-2 mb-4 flex-1">{video.description}</p>
                                         </div>
-                                        <h3 className="text-xl font-bold text-gray-900 group-hover:text-primary transition-colors mb-2">
-                                            {file.title}
-                                        </h3>
-                                        <p className="text-gray-500 text-sm leading-relaxed">
-                                            {file.description}
-                                        </p>
                                     </div>
-                                    <div className="flex items-center gap-3 shrink-0 mt-2 md:mt-0 pt-4 md:pt-0 border-t md:border-t-0 border-gray-100">
-                                        <a
-                                            href={file.file_url}
-                                            download
-                                            className="px-5 py-2.5 bg-white border border-gray-200 text-gray-700 text-sm font-semibold rounded-xl hover:bg-gray-50 transition-colors flex items-center gap-2"
-                                        >
-                                            <Download className="w-4 h-4" /> Download
-                                        </a>
-                                    </div>
-                                </div>
-                            ))}
-                        </>
-                    )}
-
-                    {(!program.videos || program.videos.length === 0) && (!program.resources || program.resources.length === 0) && (
-                        <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
-                            <p className="text-gray-400">Content coming soon for {program.title}</p>
+                                );
+                            })}
+                            {/* Spacer for right padding */}
+                            <div className="w-4 shrink-0"></div>
                         </div>
+                    ) : (
+                        <div className="text-center text-gray-400 py-10">No videos available yet.</div>
                     )}
                 </div>
-            </div>
+            </section>
+
+            {/* Resources Section (Preserved just in case, but styled minimally) */}
+            {program.resources && program.resources.length > 0 && (
+                <section className="container mx-auto px-4 py-8">
+                    <div className="max-w-2xl mx-auto">
+                        <h3 className="text-xl font-bold text-gray-800 mb-4 px-4">Resources</h3>
+                        <div className="space-y-3">
+                            {program.resources.map(file => (
+                                <a key={file.id} href={file.file_url} download className="flex items-center p-4 bg-white rounded-xl border border-gray-100 hover:border-primary/30 transition-colors shadow-sm gap-4">
+                                    <div className="bg-blue-50 p-2 rounded-lg text-blue-600"><FileText size={20} /></div>
+                                    <div className="flex-1">
+                                        <div className="font-semibold text-gray-900">{file.title}</div>
+                                        <div className="text-xs text-gray-500">{file.description}</div>
+                                    </div>
+                                    <Download size={18} className="text-gray-400" />
+                                </a>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            )}
+
+
+            {/* 4. Subscribe CTA Section */}
+            <section className="py-20 bg-white border-t border-gray-100">
+                <div className="container mx-auto px-4 text-center">
+                    <h2 className="text-4xl font-bold text-gray-900 mb-4">Want more?</h2>
+                    <p className="text-gray-500 mb-8 max-w-lg mx-auto">
+                        Subscribe to my YouTube channel for weekly updates, behind-the-scenes content, and more educational videos.
+                    </p>
+                    <a
+                        href="https://www.youtube.com/@TanCharm"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center px-8 py-4 bg-[#FF0000] text-white font-bold rounded-full text-lg shadow-lg hover:bg-red-700 hover:scale-105 transition-all transform"
+                    >
+                        <PlayCircle className="w-6 h-6 mr-2 fill-current" />
+                        Subscribe to YT
+                    </a>
+                </div>
+            </section>
+
         </div>
-    )
+    );
 }
 
