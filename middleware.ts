@@ -15,8 +15,19 @@ export default async function middleware(request: NextRequest) {
             // 3. Check for Custom Session (Fallback)
             // If the user specific fallback cookie exists, we allow access
             const customSession = request.cookies.get('custom_session');
+            let isCustomSessionValid = false;
 
-            if (!user && !customSession) {
+            if (customSession) {
+                try {
+                    const { verifySession } = await import('@/lib/auth');
+                    const payload = await verifySession(customSession.value);
+                    if (payload) isCustomSessionValid = true;
+                } catch (e) {
+                    console.error("Middleware JWT custom session verify error", e);
+                }
+            }
+
+            if (!user && !isCustomSessionValid) {
                 // No Supabase user AND no custom session -> Redirect to login
                 const url = request.nextUrl.clone();
                 url.pathname = '/login';

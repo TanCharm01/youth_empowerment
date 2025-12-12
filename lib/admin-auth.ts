@@ -18,7 +18,11 @@ export async function verifyAdmin() {
         const cookieStore = await cookies();
         const customSession = cookieStore.get('custom_session');
         if (customSession) {
-            userId = customSession.value;
+            const { verifySession } = await import('@/lib/auth');
+            const payload = await verifySession(customSession.value);
+            if (payload) {
+                userId = payload.userId;
+            }
         }
     }
 
