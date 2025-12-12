@@ -68,7 +68,8 @@ export async function login(prevState: any, formData: FormData) {
                         httpOnly: true,
                         path: '/',
                         secure: process.env.NODE_ENV === 'production',
-                        maxAge: 60 * 60 * 24 * 7 // 1 week
+                        // 30 minutes idle timeout
+                        maxAge: 30 * 60 // 30 minutes
                     });
 
                     revalidatePath('/', 'layout');

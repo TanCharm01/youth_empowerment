@@ -21,7 +21,22 @@ export default async function middleware(request: NextRequest) {
                 try {
                     const { verifySession } = await import('@/lib/auth');
                     const payload = await verifySession(customSession.value);
-                    if (payload) isCustomSessionValid = true;
+                    if (payload) {
+                        isCustomSessionValid = true;
+
+                        // Sliding Session: Refresh Cookie
+                        // We can't directly set cookies on the request for the response easily in Middleware 
+                        // without creating a response object first.
+                        // Standard Next.js Middleware pattern for cookie refresh:
+                        const response = NextResponse.next();
+                        response.cookies.set('custom_session', customSession.value, {
+                            httpOnly: true,
+                            path: '/',
+                            secure: process.env.NODE_ENV === 'production',
+                            maxAge: 30 * 60 // Refresh to 30 mins
+                        });
+                        return response;
+                    }
                 } catch (e) {
                     console.error("Middleware JWT custom session verify error", e);
                 }
