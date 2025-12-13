@@ -44,7 +44,7 @@ export async function deleteResource(id: string) {
 
     if (error) {
         console.error("Error deleting resource:", error);
-        return { message: 'Failed to delete resource' };
+        throw new Error('Failed to delete resource');
     }
 
     revalidatePath('/admin/resources');
