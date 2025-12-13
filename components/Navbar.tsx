@@ -31,7 +31,7 @@ export default function Navbar({ isLoggedIn, isAdmin }: { isLoggedIn: boolean; i
                     <Link href="/" className="hover:text-primary transition-colors">Home</Link>
                     <Link href="/about" className="hover:text-primary transition-colors">About</Link>
                     <Link href="/programs" className="hover:text-primary transition-colors">Programs</Link>
-                    <Link href="/mentorship" className="hover:text-primary transition-colors">Mentorship</Link>
+
                 </div>
 
                 {/* Auth Buttons */}

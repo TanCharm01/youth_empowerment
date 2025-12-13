@@ -17,6 +17,7 @@ export const metadata: Metadata = {
 
 import { cookies } from 'next/headers';
 import { createClient } from '@/utils/supabase/server';
+import { verifySession } from '@/lib/auth';
 
 export default async function RootLayout({
   children,
@@ -31,11 +32,16 @@ export default async function RootLayout({
 
   // Check for our custom fallback session
   const customSession = cookieStore.get('custom_session');
+  let validCustomSession = null;
 
-  const isLoggedIn = !!user || !!customSession;
+  if (customSession) {
+    validCustomSession = await verifySession(customSession.value);
+  }
+
+  const isLoggedIn = !!user || !!validCustomSession;
 
   let isAdmin = false;
-  const userId = user?.id || customSession?.value;
+  const userId = user?.id || validCustomSession?.userId;
 
   if (userId) {
     const { data: dbUser } = await supabase

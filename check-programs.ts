@@ -1,6 +1,26 @@
-import prisma from './lib/prisma';
+import fs from 'fs';
+import path from 'path';
+
+// Load .env manually
+try {
+    const envPath = path.join(process.cwd(), '.env');
+    const envFile = fs.readFileSync(envPath, 'utf8');
+    const lines = envFile.split(/\r?\n/);
+    lines.forEach(line => {
+        const match = line.match(/^([^=]+)=(.*)$/);
+        if (match) {
+            const key = match[1].trim();
+            const value = match[2].trim().replace(/^['"]|['"]$/g, '');
+            process.env[key] = value;
+        }
+    });
+} catch (e) { console.log(e); }
+
+// import prisma from './lib/prisma'; // REMOVED
 
 async function checkPrograms() {
+    const { default: prisma } = await import('./lib/prisma');
+    console.log("Prisma imported dynamically.");
     try {
         const count = await prisma.programs.count();
         console.log(`Total programs: ${count}`);

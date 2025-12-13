@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { BookOpen, PlayCircle, Settings, LogOut, Award, Clock } from 'lucide-react';
 import { logout } from '@/app/(auth)/signup/actions';
 
+import { verifySession } from '@/lib/auth';
+
 export default async function DashboardPage() {
     const supabase = await createClient();
     let userId: string | null = null;
@@ -21,7 +23,10 @@ export default async function DashboardPage() {
         const cookieStore = await cookies();
         const customSession = cookieStore.get('custom_session');
         if (customSession) {
-            userId = customSession.value;
+            const payload = await verifySession(customSession.value);
+            if (payload) {
+                userId = payload.userId;
+            }
         }
     }
 

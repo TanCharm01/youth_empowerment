@@ -2,6 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FileText, PlayCircle, ArrowLeft, Download } from "lucide-react";
 import prisma from "@/lib/prisma";
+import { createClient } from "@/utils/supabase/server";
+import StartProgramButton from "../components/StartProgramButton";
 
 // Helper to get YouTube ID
 function getYoutubeId(url: string) {
@@ -23,6 +25,23 @@ export default async function ProgramPage({ params }: { params: Promise<{ slug: 
 
     if (!program) return notFound();
 
+    // Check if user is enrolled
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    let isEnrolled = false;
+
+    if (user) {
+        const enrollment = await prisma.user_progress.findUnique({
+            where: {
+                user_id_program_id: {
+                    user_id: user.id,
+                    program_id: slug
+                }
+            }
+        });
+        isEnrolled = !!enrollment;
+    }
+
     return (
         <div className="min-h-screen bg-white">
             {/* 1. Header Section with Half-Circle */}
@@ -39,9 +58,14 @@ export default async function ProgramPage({ params }: { params: Promise<{ slug: 
                     <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 tracking-tight">
                         {program.title}
                     </h1>
-                    <p className="text-lg text-pink-100 max-w-2xl mx-auto opacity-90">
+                    <p className="text-lg text-pink-100 max-w-2xl mx-auto opacity-90 mb-8">
                         {program.description}
                     </p>
+                    
+                    {/* Start/Continue Button */}
+                    <div className="flex justify-center">
+                        <StartProgramButton programId={program.id} isEnrolled={isEnrolled} />
+                    </div>
                 </div>
                 {/* Decorative background pattern could go here */}
             </div>

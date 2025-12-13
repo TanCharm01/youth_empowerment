@@ -14,7 +14,7 @@ export default async function AdminLayout({
         { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
         { name: 'Programs', href: '/admin/programs', icon: BookOpen },
         { name: 'Videos', href: '/admin/videos', icon: Video },
-        // { name: 'Resources', href: '/admin/resources', icon: FileText }, // Future
+        { name: 'Resources', href: '/admin/resources', icon: FileText },
         { name: 'Users', href: '/admin/users', icon: Users },
     ];
 
