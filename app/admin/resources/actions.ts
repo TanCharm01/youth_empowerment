@@ -25,7 +25,7 @@ export async function createResource(formData: FormData) {
 
     if (error) {
         console.error("Error creating resource:", error);
-        return { message: 'Failed to create resource' };
+        throw new Error('Failed to create resource');
     }
 
     revalidatePath('/admin/resources');

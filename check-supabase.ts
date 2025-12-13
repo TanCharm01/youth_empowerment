@@ -19,7 +19,7 @@ try {
         }
     });
 } catch (e) {
-    console.log("Could not load .env file:", e.message);
+    console.log("Could not load .env file:", (e as Error).message);
 }
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
