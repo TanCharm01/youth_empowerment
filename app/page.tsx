@@ -22,7 +22,7 @@ export default async function Home() {
 
         <div className="container px-4 relative z-10 text-center flex flex-col items-center gap-8">
           <span className="inline-block px-4 py-1.5 rounded-full bg-white/80 backdrop-blur-sm border border-pink-100 text-pink-600 text-sm font-medium tracking-wide animate-fade-in-up shadow-sm">
-            ✨ WELCOME TO TANATSWA'S HUB
+            WELCOME TO TANATSWA'S HUB
           </span>
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-gray-900 tracking-tight leading-none max-w-5xl">
             Empowering Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-rose-400">Journey</span> to Success
@@ -60,7 +60,7 @@ export default async function Home() {
 
         <div className="relative h-[500px] rounded-[2.5rem] overflow-hidden shadow-2xl rotate-1 hover:rotate-0 transition-transform duration-500 ring-8 ring-white bg-gray-100">
           {/* Placeholder for Tanatswa's image */}
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2671&auto=format&fit=crop')] bg-cover bg-center" />
+          <div className="absolute inset-0 bg-[url('/images/about_section.jpg')] bg-cover bg-top" />
         </div>
       </section>
 

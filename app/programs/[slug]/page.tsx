@@ -12,6 +12,17 @@ function getYoutubeId(url: string) {
     return (match && match[2].length === 11) ? match[2] : null;
 }
 
+// Map program titles to local images
+function getProgramImage(title: string) {
+    const map: Record<string, string> = {
+        "High School": "/images/High_school.jpg",
+        "University": "/images/university.jpg",
+        "Gap Year": "/images/gap_year.jpg",
+        "Personal Dev": "/images/personal_development.jpg"
+    };
+    return map[title] || "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
+}
+
 export default async function ProgramPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
 
@@ -61,7 +72,7 @@ export default async function ProgramPage({ params }: { params: Promise<{ slug: 
                     <p className="text-lg text-pink-100 max-w-2xl mx-auto opacity-90 mb-8">
                         {program.description}
                     </p>
-                    
+
                     {/* Start/Continue Button */}
                     <div className="flex justify-center">
                         <StartProgramButton programId={program.id} isEnrolled={isEnrolled} />
@@ -93,7 +104,7 @@ export default async function ProgramPage({ params }: { params: Promise<{ slug: 
                         <div className="aspect-square rounded-2xl overflow-hidden bg-gray-100 shadow-lg rotate-3 transform hover:rotate-0 transition-transform duration-300">
                             {/* Using a placeholder service or the program image if it exists, implementing the requested hardcoded style */}
                             <img
-                                src={program.cover_image || "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"}
+                                src={getProgramImage(program.title)}
                                 alt="Author Thoughts"
                                 className="w-full h-full object-cover"
                             />
