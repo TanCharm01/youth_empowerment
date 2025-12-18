@@ -70,10 +70,6 @@ async function main() {
     }
     console.log("");
 
-    // --- TEST 3: Input Validation (A03) ---
-    // Since we can't easily invoke server actions directly from a script without mocking formdata/headers
-    // We will test the Zod schemas if we could import them, or just rely on our previous code review.
-    // For this script, we'll simulate the validation logic.
     console.log("3️⃣  Testing Input Validation Logic (A03)...");
     const loginSchema = z.object({
         email: z.string().email(),

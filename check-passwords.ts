@@ -3,9 +3,7 @@ import { PrismaClient } from '@prisma/client';
 async function main() {
     console.log("Checking Users Table for Hashed Passwords...");
 
-    // We can't use the server action client here easily as it uses cookies/headers
-    // We'll use the direct postgres query via prisma if available, or just use a raw query
-    // Actually, let's use the local Prisma instance since we are on the server
+
 
     const prisma = new PrismaClient();
 

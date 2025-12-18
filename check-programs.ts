@@ -45,8 +45,7 @@ async function checkPrograms() {
     } catch (e) {
         console.error("Error:", e);
     }
-    // Prisma client is managed by singleton, no need to disconnect explicitly usually, 
-    // but here we are in a script.
+
 }
 
 checkPrograms();

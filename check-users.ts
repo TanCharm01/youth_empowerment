@@ -1,6 +1,4 @@
 
-import { Pool } from 'pg';
-import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
 import fs from 'fs';
 import path from 'path';
@@ -21,7 +19,7 @@ try {
         }
     });
     console.log("Loaded .env file. Keys found:", Object.keys(process.env).filter(k => lines.some(l => l.startsWith(k))));
-} catch (e) {
+} catch (e: any) {
     console.log("Could not load .env file:", e.message);
 }
 
@@ -32,12 +30,7 @@ if (!connectionString) {
     process.exit(1);
 }
 
-const pool = new Pool({
-    connectionString,
-    ssl: { rejectUnauthorized: false }
-});
-const adapter = new PrismaPg(pool);
-const prisma = new PrismaClient({ adapter });
+const prisma = new PrismaClient();
 
 async function main() {
     console.log("Checking users in database...");

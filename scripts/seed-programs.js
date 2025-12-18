@@ -1,5 +1,5 @@
 
-// Ensure we load env vars first
+
 require('dotenv').config();
 
 const { PrismaClient } = require('@prisma/client');
@@ -8,11 +8,8 @@ const { PrismaPg } = require('@prisma/adapter-pg');
 
 const databaseUrl = process.env.DATABASE_URL;
 
-// Re-implement the adapter logic locally for the script to be self-contained and sure
-const connectionString = `${databaseUrl}`;
 const pool = new Pool({
-    connectionString,
-    // Add SSL rejection is false as per our fix for dev
+    connectionString: databaseUrl,
     ssl: { rejectUnauthorized: false }
 });
 const adapter = new PrismaPg(pool);

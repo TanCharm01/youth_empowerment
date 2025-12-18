@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 const { Pool } = require('pg');
 
-// Try to load dotenv
 try {
     require('dotenv').config();
 } catch (e) {
@@ -12,7 +11,7 @@ try {
 const envPath = path.resolve(__dirname, '..', '.env');
 const sqlPath = path.resolve(__dirname, '..', 'create_missing_tables.sql');
 
-// Simple .env parser fallback
+
 function getDatabaseUrlFromFile() {
     try {
         if (!fs.existsSync(envPath)) return null;
@@ -46,10 +45,8 @@ async function run() {
         process.exit(1);
     }
 
-    // Debug log (masked)
     console.log(`URL found (raw): ${connectionString.substring(0, 15)}...`);
 
-    // Sanitize: remove all whitespace/newlines
     connectionString = connectionString.replace(/\s/g, '');
 
     console.log(`URL (sanitized): ${connectionString.substring(0, 15)}...${connectionString.substring(connectionString.length - 10)}`);
@@ -64,8 +61,6 @@ async function run() {
         console.log("Success! Tables created.");
     } catch (e) {
         console.error("Error executing SQL:", e);
-        // Special handling for "relation already exists" is implicit since we use IF NOT EXISTS in SQL,
-        // but let's see exactly what fails.
         process.exit(1);
     } finally {
         await pool.end();

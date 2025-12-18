@@ -2,8 +2,7 @@ const { Pool } = require('pg');
 const fs = require('fs');
 const path = require('path');
 
-// Load .env manually to avoid dotenv weirdness if possible, or just use it if reliable.
-// We saw earlier that reading it manually helped debug the newline issue.
+
 function getDatabaseUrl() {
     try {
         const envPath = path.resolve(__dirname, '.env');
@@ -35,11 +34,10 @@ async function testConnection() {
     console.log(`Original URL length: ${connectionString.length}`);
     console.log(`Original URL (ends with): ${JSON.stringify(connectionString.slice(-5))}`);
 
-    // The Fix: Trim it!
+
     const trimmed = connectionString.trim();
     console.log(`Trimmed URL length: ${trimmed.length}`);
 
-    // Test 1: Try without SSL explicit (relies on query param or defaults)
     console.log("\n--- Attempting connection with Trimmed URL ---");
     const pool = new Pool({ connectionString: trimmed });
 
